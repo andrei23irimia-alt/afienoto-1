@@ -5,12 +5,20 @@ from aiogram.types import Message
 router = Router()
 
 WELCOME_TEXT = (
-    "Salut! Trimite-mi:\n"
-    "- un link YouTube, sau un text de căutare (ex: nume artist - piesă) — pentru căutare "
-    "îți arăt câteva rezultate din care alegi cu un buton\n"
-    "- un link de track Spotify (open.spotify.com/track/...)\n\n"
-    "și îți trimit înapoi piesa ca fișier audio, cu tag-uri și copertă.\n\n"
-    "Bot pentru uz personal — respectă drepturile de autor ale conținutului pe care îl descarci."
+    "👋 <b>Salut! Ce pot să fac:</b>\n\n"
+    "🎵 <b>YouTube</b>\n"
+    "• trimite un link YouTube → ți-l descarc direct\n"
+    "• trimite un text de căutare (ex: <i>nume artist - piesă</i>) → îți arăt câteva "
+    "rezultate cu butoane, alegi unul\n"
+    "• trimite un link de <b>playlist</b> YouTube → descarc primele piese din el\n\n"
+    "🟢 <b>Spotify</b>\n"
+    "• trimite un link de track Spotify (open.spotify.com/track/...) → găsesc piesa "
+    "pe YouTube și ți-o trimit taghată corect (titlu, artist, album, copertă)\n\n"
+    "⚙️ <b>Comenzi</b>\n"
+    "/calitate — alegi calitatea audio (192kbps sau 320kbps)\n"
+    "/help — acest mesaj\n\n"
+    "Primești mereu fișierul audio taghat, cu progres afișat live cât timp se descarcă.\n\n"
+    "⚠️ Bot pentru uz personal — respectă drepturile de autor ale conținutului pe care îl descarci."
 )
 
 

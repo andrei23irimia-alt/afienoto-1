@@ -6,10 +6,13 @@ Bot Telegram (Python, [aiogram](https://docs.aiogram.dev/) 3.x) care descarcă a
 
 ## Funcționalități
 
-- Trimite un link YouTube → primești piesa ca fișier audio, taghată (titlu/artist).
+- Trimite un link YouTube → primești piesa ca fișier audio, taghată (titlu/artist), cu progres live al descărcării (%).
 - Trimite un text de căutare (ex: `artist - piesă`) → botul îți arată până la 5 rezultate ca butoane, alegi unul și primești fișierul.
+- Trimite un link de **playlist YouTube** → botul descarcă primele piese din el (limită configurabilă, implicit 10) și le trimite pe rând, cu progres.
 - Trimite un link de track Spotify (`open.spotify.com/track/...`) → botul ia metadatele de pe Spotify, găsește cea mai bună potrivire pe YouTube, descarcă și trimite piesa taghată cu titlu/artist/album/copertă corecte.
-- Meniul de comenzi din Telegram (`/start`, `/help`) e setat automat la pornirea botului.
+- `/calitate` — alegi calitatea audio (192kbps sau 320kbps) printr-un meniu cu butoane; preferința se ține minte per conversație.
+- Meniul de comenzi din Telegram (`/start`, `/calitate`, `/help`) e setat automat la pornirea botului.
+- Mesaje cu emoji și formatare, ca să fie clar în ce stadiu e descărcarea (🔎 caut / ⬇️ descarc / 🏷️ taghez / 📤 trimit).
 - Limită configurabilă de durată (implicit 15 min) pentru a evita descărcări foarte mari.
 - Dacă `ffmpeg` nu e instalat pe sistem, botul folosește automat binarul inclus în pachetul Python `imageio-ffmpeg` — nu mai trebuie instalat manual.
 
@@ -73,10 +76,10 @@ run.py                       # entrypoint pentru build-uri PyInstaller (PC)
 
 ## Idei pentru extinderi viitoare (nu sunt încă implementate)
 
-- Descărcare playlist-uri/albume complete (Spotify sau YouTube), cu progres live.
+- Descărcare albume complete de pe Spotify, cu progres live (playlist-urile YouTube merg deja).
 - Inline mode (`@bot piesă` în orice chat).
 - Auto-detect: orice link YouTube/Spotify forwardat e procesat automat, fără comandă.
-- Alegere calitate/format (MP3 320kbps / opus / FLAC) din butoane.
+- Alegere format (opus / FLAC) pe lângă MP3 (calitatea 192/320kbps merge deja din `/calitate`).
 - Trim/decupare piesă (ex. pentru ringtone) cu ffmpeg.
 - Recunoaștere piesă dintr-o notă vocală (stil Shazam, via `shazamio`).
 - Cache/dedup: reutilizarea `file_id`-ului Telegram pentru piese deja cerute.

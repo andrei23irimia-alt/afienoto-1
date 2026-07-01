@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     spotify_client_id: str | None = None
     spotify_client_secret: str | None = None
     max_duration_seconds: int = 900
+    max_playlist_items: int = 10
     download_dir: str = "downloads"
 
 

@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
 from aiogram.types import BotCommand
 
 from bot.config import settings
@@ -13,7 +14,7 @@ async def main() -> None:
     logging.basicConfig(level=logging.INFO)
     Path(settings.download_dir).mkdir(parents=True, exist_ok=True)
 
-    bot = Bot(token=settings.bot_token)
+    bot = Bot(token=settings.bot_token, default=DefaultBotProperties(parse_mode="HTML"))
     dispatcher = Dispatcher()
 
     dispatcher.include_router(start.router)
@@ -23,6 +24,7 @@ async def main() -> None:
     await bot.set_my_commands(
         [
             BotCommand(command="start", description="Pornește botul"),
+            BotCommand(command="calitate", description="Alege calitatea audio"),
             BotCommand(command="help", description="Cum se folosește botul"),
         ]
     )
