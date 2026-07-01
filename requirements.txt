@@ -1,0 +1,6 @@
+aiogram>=3.27,<4
+yt-dlp>=2025.6.9
+spotipy>=2.24
+mutagen>=1.47
+pydantic-settings>=2.4
+python-dotenv>=1.0
