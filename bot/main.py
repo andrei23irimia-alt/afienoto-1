@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand
 
 from bot.config import settings
 from bot.handlers import spotify, start, youtube
@@ -19,6 +20,12 @@ async def main() -> None:
     dispatcher.include_router(spotify.router)
     dispatcher.include_router(youtube.router)
 
+    await bot.set_my_commands(
+        [
+            BotCommand(command="start", description="Pornește botul"),
+            BotCommand(command="help", description="Cum se folosește botul"),
+        ]
+    )
     await bot.delete_webhook(drop_pending_updates=True)
     await dispatcher.start_polling(bot)
 

@@ -4,3 +4,4 @@ spotipy>=2.24
 mutagen>=1.47
 pydantic-settings>=2.4
 python-dotenv>=1.0
+imageio-ffmpeg>=0.5

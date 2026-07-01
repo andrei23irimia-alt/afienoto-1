@@ -13,6 +13,16 @@ router = Router()
 logger = logging.getLogger(__name__)
 
 
+@router.message(
+    F.text.func(spotify_service.is_spotify_url) & ~F.text.func(spotify_service.is_spotify_track_url)
+)
+async def handle_unsupported_spotify_link(message: Message) -> None:
+    await message.answer(
+        "Momentan suport doar linkuri de track Spotify (open.spotify.com/track/...). "
+        "Playlist-urile și albumele vin într-o versiune viitoare."
+    )
+
+
 @router.message(F.text.func(spotify_service.is_spotify_track_url))
 async def handle_spotify_track(message: Message) -> None:
     track_id = spotify_service.extract_track_id(message.text.strip())

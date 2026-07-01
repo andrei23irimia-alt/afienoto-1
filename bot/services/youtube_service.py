@@ -6,6 +6,8 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
+import shutil
+
 import yt_dlp
 
 from bot.config import settings
@@ -13,6 +15,17 @@ from bot.config import settings
 YOUTUBE_URL_RE = re.compile(
     r"(?:https?://)?(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/|youtube\.com/shorts/)([\w-]+)"
 )
+
+
+def _ffmpeg_location() -> str | None:
+    if shutil.which("ffmpeg"):
+        return None  # let yt-dlp find it on PATH
+    try:
+        import imageio_ffmpeg
+
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        return None
 
 
 @dataclass
@@ -29,12 +42,14 @@ def is_youtube_url(text: str) -> bool:
 
 
 def _ydl_opts(out_template: str) -> dict:
-    return {
+    opts = {
         "format": "bestaudio/best",
         "outtmpl": out_template,
         "noplaylist": True,
         "quiet": True,
         "no_warnings": True,
+        "socket_timeout": 30,
+        "retries": 3,
         "postprocessors": [
             {
                 "key": "FFmpegExtractAudio",
@@ -43,6 +58,10 @@ def _ydl_opts(out_template: str) -> dict:
             }
         ],
     }
+    ffmpeg_location = _ffmpeg_location()
+    if ffmpeg_location:
+        opts["ffmpeg_location"] = ffmpeg_location
+    return opts
 
 
 def _extract(query_or_url: str) -> dict:

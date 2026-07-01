@@ -9,6 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from bot.config import settings
 
 SPOTIFY_TRACK_RE = re.compile(r"open\.spotify\.com/track/([a-zA-Z0-9]+)")
+SPOTIFY_URL_RE = re.compile(r"open\.spotify\.com/")
 
 _client: spotipy.Spotify | None = None
 
@@ -35,6 +36,10 @@ class SpotifyTrack:
 
 def is_spotify_track_url(text: str) -> bool:
     return bool(SPOTIFY_TRACK_RE.search(text))
+
+
+def is_spotify_url(text: str) -> bool:
+    return bool(SPOTIFY_URL_RE.search(text))
 
 
 def extract_track_id(url: str) -> str | None:

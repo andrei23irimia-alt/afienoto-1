@@ -5,3 +5,15 @@ __pycache__/
 venv/
 downloads/*
 !downloads/.gitkeep
+.pytest_cache/
+
+# Android build artifacts (produced by GitHub Actions, not committed)
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+
+# PyInstaller build artifacts (produced by GitHub Actions, not committed)
+build/
+dist/
+*.spec
