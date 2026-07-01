@@ -1,0 +1,65 @@
+name: Build desktop launcher
+
+on:
+  push:
+    branches: [claude/telegram-music-bot-dpp4f8, main]
+    paths:
+      - "bot/**"
+      - "run.py"
+      - "requirements.txt"
+      - ".github/workflows/build-desktop.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            asset_name: afienoto-bot-windows.exe
+            build_path: dist/afienoto-bot.exe
+          - os: macos-latest
+            asset_name: afienoto-bot-macos
+            build_path: dist/afienoto-bot
+          - os: ubuntu-latest
+            asset_name: afienoto-bot-linux
+            build_path: dist/afienoto-bot
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build executable
+        run: pyinstaller --onefile --name afienoto-bot run.py
+
+      - name: Rename artifact
+        shell: bash
+        run: cp "${{ matrix.build_path }}" "${{ matrix.asset_name }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ matrix.asset_name }}
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop-latest
+          name: Desktop launcher (latest)
+          body: |
+            Executabile care pornesc botul direct, fără să mai instalezi Python manual.
+            Ai nevoie în continuare de un fișier `.env` lângă executabil (vezi `.env.example`
+            din repo) cu BOT_TOKEN și, opțional, credențialele Spotify. Pe Windows/Mac ai
+            nevoie și de ffmpeg instalat (sau lăsat pe PATH) pentru conversia audio.
+          files: ${{ matrix.asset_name }}

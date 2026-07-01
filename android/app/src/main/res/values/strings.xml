@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Afienoto Music Bot</string>
+    <string name="subtitle">Descarcă muzică de pe YouTube și Spotify direct din Telegram.</string>
+    <string name="open_bot_button">Deschide botul în Telegram</string>
+</resources>
