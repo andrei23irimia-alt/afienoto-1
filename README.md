@@ -11,7 +11,12 @@ Bot Telegram (Python, [aiogram](https://docs.aiogram.dev/) 3.x) care descarcă a
 - Trimite un link de **playlist YouTube** → botul descarcă primele piese din el (limită configurabilă, implicit 10) și le trimite pe rând, cu progres.
 - Trimite un link de track Spotify (`open.spotify.com/track/...`) → botul ia metadatele de pe Spotify, găsește cea mai bună potrivire pe YouTube, descarcă și trimite piesa taghată cu titlu/artist/album/copertă corecte.
 - `/calitate` — alegi calitatea audio (192kbps sau 320kbps) printr-un meniu cu butoane; preferința se ține minte per conversație.
-- Meniul de comenzi din Telegram (`/start`, `/calitate`, `/help`) e setat automat la pornirea botului.
+- `/istoric` — ultimele 10 piese descărcate, cu buton de retrimitere **instant** (fără să redescarce, refolosește fișierul deja trimis pe Telegram).
+- `/favorite` — piesele salvate la favorite (❤️ sub orice piesă trimisă), cu retrimitere instant și opțiune de ștergere.
+- `/statistici` — câte piese ai descărcat, câte favorite ai și artistul tău cel mai ascultat.
+- ✂️ **Ringtone 30s** — buton sub orice piesă trimisă, taie un fragment de 30 de secunde și îl trimite separat.
+- ⚡ **Cache automat** — dacă aceeași piesă (același video YouTube + aceeași calitate) e cerută din nou, oricând, de oricine, botul o retrimite instant din cache, fără să mai descarce.
+- Meniul de comenzi din Telegram (`/start`, `/calitate`, `/istoric`, `/favorite`, `/statistici`, `/help`) e setat automat la pornirea botului.
 - Mesaje cu emoji și formatare, ca să fie clar în ce stadiu e descărcarea (🔎 caut / ⬇️ descarc / 🏷️ taghez / 📤 trimit).
 - Limită configurabilă de durată (implicit 15 min) pentru a evita descărcări foarte mari.
 - Dacă `ffmpeg` nu e instalat pe sistem, botul folosește automat binarul inclus în pachetul Python `imageio-ffmpeg` — nu mai trebuie instalat manual.
@@ -63,16 +68,21 @@ bot/
 ├── handlers/
 │   ├── start.py             # /start, /help
 │   ├── spotify.py           # linkuri de track Spotify
-│   └── youtube.py           # linkuri YouTube / căutare text / selecție din butoane
+│   └── youtube.py           # linkuri YouTube / playlist / căutare / istoric / favorite / ringtone
 └── services/
-    ├── youtube_service.py   # yt-dlp: căutare + descărcare + conversie mp3
+    ├── youtube_service.py   # yt-dlp: căutare + descărcare + conversie mp3 + progres
     ├── spotify_service.py   # spotipy: metadate track
     ├── matcher.py           # potrivește track Spotify cu rezultatul YouTube corect
-    └── tagging.py           # mutagen: tag-uri ID3 + copertă
+    ├── tagging.py           # mutagen: tag-uri ID3 + copertă
+    ├── db.py                 # SQLite: istoric, favorite, cache de fișiere (bot_data.db)
+    ├── preferences.py       # preferința de calitate audio per conversație
+    └── keyboards.py         # butoanele ❤️ / ✂️ atașate sub piesele trimise
 tests/                       # teste pentru logica pură (fără rețea)
 android/                     # aplicație Android minimă (shortcut către bot)
 run.py                       # entrypoint pentru build-uri PyInstaller (PC)
 ```
+
+Baza de date SQLite (`bot_data.db`, configurabil via `DB_PATH`) se creează automat la prima rulare, lângă bot — nu necesită niciun server extern.
 
 ## Idei pentru extinderi viitoare (nu sunt încă implementate)
 
@@ -80,10 +90,8 @@ run.py                       # entrypoint pentru build-uri PyInstaller (PC)
 - Inline mode (`@bot piesă` în orice chat).
 - Auto-detect: orice link YouTube/Spotify forwardat e procesat automat, fără comandă.
 - Alegere format (opus / FLAC) pe lângă MP3 (calitatea 192/320kbps merge deja din `/calitate`).
-- Trim/decupare piesă (ex. pentru ringtone) cu ffmpeg.
 - Recunoaștere piesă dintr-o notă vocală (stil Shazam, via `shazamio`).
-- Cache/dedup: reutilizarea `file_id`-ului Telegram pentru piese deja cerute.
-- Istoric personal per utilizator + limită zilnică de cereri.
+- Limită zilnică de cereri per utilizator.
 - Deployment cu Docker + webhook în loc de polling.
 - App Android/desktop independentă (fără Telegram) — momentan APK-ul e doar un shortcut spre bot, iar executabilele PC doar rulează botul local.
 

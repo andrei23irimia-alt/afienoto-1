@@ -16,7 +16,11 @@ WELCOME_TEXT = (
     "pe YouTube și ți-o trimit taghată corect (titlu, artist, album, copertă)\n\n"
     "⚙️ <b>Comenzi</b>\n"
     "/calitate — alegi calitatea audio (192kbps sau 320kbps)\n"
+    "/istoric — ultimele tale piese, cu retrimitere instant\n"
+    "/favorite — piesele tale salvate la favorite\n"
+    "/statistici — câte piese ai descărcat și artistul tău preferat\n"
     "/help — acest mesaj\n\n"
+    "Sub fiecare piesă primită ai butoane ❤️ (favorite) și ✂️ (ringtone de 30s).\n\n"
     "Primești mereu fișierul audio taghat, cu progres afișat live cât timp se descarcă.\n\n"
     "⚠️ Bot pentru uz personal — respectă drepturile de autor ale conținutului pe care îl descarci."
 )

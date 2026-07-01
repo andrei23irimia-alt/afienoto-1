@@ -25,6 +25,9 @@ async def main() -> None:
         [
             BotCommand(command="start", description="Pornește botul"),
             BotCommand(command="calitate", description="Alege calitatea audio"),
+            BotCommand(command="istoric", description="Ultimele piese descărcate"),
+            BotCommand(command="favorite", description="Piesele tale favorite"),
+            BotCommand(command="statistici", description="Statistici personale"),
             BotCommand(command="help", description="Cum se folosește botul"),
         ]
     )

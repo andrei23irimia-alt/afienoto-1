@@ -7,7 +7,8 @@ from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 
 from bot.config import settings
-from bot.services import matcher, preferences, spotify_service, tagging, youtube_service
+from bot.services import db, matcher, preferences, spotify_service, tagging, youtube_service
+from bot.services.keyboards import actions_keyboard
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -52,7 +53,23 @@ async def handle_spotify_track(message: Message) -> None:
         await status.edit_text("❌ Nu am găsit o potrivire pe YouTube pentru această piesă.")
         return
 
+    video_id = best_match["id"]
     quality = preferences.quality_for(message.chat.id)
+    chat_id = message.chat.id
+
+    cached = db.cache_get(video_id, quality)
+    if cached:
+        await status.edit_text("⚡ Găsit deja, trimit instant...")
+        await message.answer_audio(
+            cached["file_id"],
+            title=spotify_track.title,
+            performer=spotify_track.artist,
+            reply_markup=actions_keyboard(video_id, db.is_favorite(chat_id, video_id)),
+        )
+        db.record_download(chat_id, video_id, spotify_track.title, spotify_track.artist, cached["file_id"])
+        await status.delete()
+        return
+
     await status.edit_text("⬇️ Se descarcă... 0%")
 
     async def on_progress(pct: int) -> None:
@@ -62,9 +79,9 @@ async def handle_spotify_track(message: Message) -> None:
             pass
 
     try:
-        yt_track = await youtube_service.download_video_id(best_match["id"], quality, on_progress)
+        yt_track = await youtube_service.download_video_id(video_id, quality, on_progress)
     except Exception:
-        logger.exception("YouTube download failed for matched video: %s", best_match.get("id"))
+        logger.exception("YouTube download failed for matched video: %s", video_id)
         await status.edit_text("❌ Am găsit piesa, dar descărcarea a eșuat. Încearcă din nou.")
         return
 
@@ -79,11 +96,15 @@ async def handle_spotify_track(message: Message) -> None:
 
     try:
         await status.edit_text("📤 Trimit fișierul...")
-        await message.answer_audio(
+        sent_msg = await message.answer_audio(
             FSInputFile(yt_track.file_path),
             title=spotify_track.title,
             performer=spotify_track.artist,
+            reply_markup=actions_keyboard(video_id, False),
         )
+        file_id = sent_msg.audio.file_id
+        db.cache_set(video_id, quality, file_id, spotify_track.title, spotify_track.artist, yt_track.duration)
+        db.record_download(chat_id, video_id, spotify_track.title, spotify_track.artist, file_id)
     finally:
         await status.delete()
         _cleanup(yt_track.file_path)

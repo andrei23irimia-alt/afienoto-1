@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     max_duration_seconds: int = 900
     max_playlist_items: int = 10
     download_dir: str = "downloads"
+    db_path: str = "bot_data.db"
 
 
 settings = Settings()

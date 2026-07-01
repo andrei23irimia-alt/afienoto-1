@@ -6,6 +6,7 @@ venv/
 downloads/*
 !downloads/.gitkeep
 .pytest_cache/
+*.db
 
 # Android build artifacts (produced by GitHub Actions, not committed)
 android/.gradle/

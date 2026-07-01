@@ -31,9 +31,14 @@ def _ffmpeg_location() -> str | None:
         return None
 
 
+def ffmpeg_path() -> str:
+    return _ffmpeg_location() or "ffmpeg"
+
+
 @dataclass
 class YoutubeTrack:
     file_path: Path
+    video_id: str
     title: str
     artist: str
     duration: int
@@ -46,6 +51,11 @@ def is_youtube_url(text: str) -> bool:
 
 def is_youtube_playlist_url(text: str) -> bool:
     return bool(PLAYLIST_URL_RE.search(text))
+
+
+def extract_video_id(url: str) -> str | None:
+    match = YOUTUBE_URL_RE.search(url)
+    return match.group(1) if match else None
 
 
 def _make_progress_hook(loop: asyncio.AbstractEventLoop, on_progress: ProgressCallback | None):
@@ -127,6 +137,7 @@ async def download(
     info = result["info"]
     return YoutubeTrack(
         file_path=result["path"],
+        video_id=info.get("id") or "",
         title=info.get("title") or "Unknown title",
         artist=info.get("uploader") or info.get("channel") or "Unknown artist",
         duration=int(info.get("duration") or 0),
